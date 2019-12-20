@@ -37,23 +37,49 @@
 void setup() {
   Serial.begin(9600);
   Motor.begin(I2C_ADDRESS);
+  Motor.stop(MOTOR2);
+  Motor.stop(MOTOR1);
 }
 
 void loop() {
   // Set speed of MOTOR1, Clockwise, speed: -100~100 
+  Motor.speed(MOTOR1, 100);
+  Motor.speed(MOTOR2, 100);
+  delay(5000);
+  
   Motor.speed(MOTOR1, 50);
-  // Set speed of MOTOR2, Anticlockwise
-  Motor.speed(MOTOR2, 70);
-  delay(2000);
-  // Change speed and direction of MOTOR1
-  Motor.speed(MOTOR1, -100);
-  // Change speed and direction of MOTOR2
+  Motor.speed(MOTOR2, 50);
+  delay(5000);
+  
+  Motor.speed(MOTOR1, 30);
+  Motor.speed(MOTOR2, 30);
+  delay(5000);
+  
+  Motor.speed(MOTOR1, 10);
+  Motor.speed(MOTOR2, 10);
+  delay(5000);
+
+  
   Motor.speed(MOTOR2, -100);
-  delay(2000);
+  Motor.speed(MOTOR1, -100);
+  delay(5000);
+  
+  Motor.speed(MOTOR1, -50);
+  Motor.speed(MOTOR2, -50);
+  delay(5000);
+  
+  Motor.speed(MOTOR1, -30);
+  Motor.speed(MOTOR2, -30);
+  delay(5000);
+  
+  Motor.speed(MOTOR1, -10);
+  Motor.speed(MOTOR2, -10);
+  delay(5000);
+  
   // Stop MOTOR1 and MOTOR2
-  Motor.stop(MOTOR1);
   Motor.stop(MOTOR2);
-  delay(2000);
+  Motor.stop(MOTOR1);  
+  delay(5000); 
 }
 
 // End of file

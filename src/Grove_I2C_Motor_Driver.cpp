@@ -81,7 +81,7 @@ void I2CMotorDriver::speed(unsigned char motor_id, int _speed)
 	}
 
 	if(motor_id == MOTOR1) {
-		if (_speed >= 0) {
+		if (_speed > 0) {
 			this->_M1_direction = 1; 
 			_speed = _speed > 100 ? 100 : _speed;
 			this->_speed1 = map(_speed, 0, 100, 0, 255);
@@ -90,10 +90,13 @@ void I2CMotorDriver::speed(unsigned char motor_id, int _speed)
 			this->_M1_direction = -1;
 			_speed = _speed < -100 ? 100 : -(_speed);
 			this->_speed1 = map(_speed, 0, 100, 0, 255);
-		}
+		}else if(_speed==0){
+      this->_M1_direction = 0;
+      this->_speed1 = 0;
+    }
 	}
 	else if(motor_id == MOTOR2) {
-		if (_speed >= 0) {
+		if (_speed > 0) {
 			this->_M2_direction = 1;
 			_speed = _speed > 100 ? 100 : _speed;
 			this->_speed2 = map(_speed, 0, 100, 0, 255);
@@ -102,14 +105,23 @@ void I2CMotorDriver::speed(unsigned char motor_id, int _speed)
 			this->_M2_direction = -1;
 			_speed = _speed < -100 ? 100 : -(_speed);
 			this->_speed2 = map(_speed, 0, 100, 0, 255);
-		}
+		}else if(_speed==0){
+      this->_M2_direction = 0;
+      this->_speed2 = 0;
+    }
 	}
 	// Set the direction
 	if (_M1_direction == 1 && _M2_direction == 1) direction(BothClockWise);
+  if (_M1_direction == 0 && _M2_direction == 1) direction(M1STM2CW);
+  if (_M1_direction == 0 && _M2_direction == -1)direction(M1STM2ACW);
+  if (_M1_direction == 1 && _M2_direction == 0)direction(M1CWM2ST);
+  if (_M1_direction == -1 && _M2_direction == 0)direction(M1ACWM2ST);
+  if (_M1_direction == 0 && _M2_direction == 0)direction(M1STM2ST);
 	if (_M1_direction == 1 && _M2_direction == -1) direction(M1CWM2ACW);
 	if (_M1_direction == -1 && _M2_direction == 1) direction(M1ACWM2CW);
 	if (_M1_direction == -1 && _M2_direction == -1) direction(BothAntiClockWise);
 	// send command
+ delay(4);
 	Wire.beginTransmission(this->_i2c_add); // begin transmission
  	Wire.write(MotorSpeedSet);              // set pwm header 
  	Wire.write(this->_speed1);              // send speed of motor1
@@ -144,23 +156,6 @@ void I2CMotorDriver::stop(unsigned char motor_id)
 		return;
 	}
 	speed(motor_id, 0);
-	if(motor_id==MOTOR1){
-		if(this->_speed2==0){
-			direction(0);
-		}else if(this->_M2_direction==1){
-			direction(0x08);
-		}else if(this->_M2_direction==-1){
-			direction(0x04);
-		}
-	}else if(motor_id==MOTOR2){
-		if(this->_speed1==0){
-			direction(0);
-		}else if(this->_M1_direction==1){
-			direction(0x02);
-		}else if(this->_M1_direction==-1){
-			direction(0x01);
-		}
-	}
 }
 
 // ***************************Stepper Motor Function***************************

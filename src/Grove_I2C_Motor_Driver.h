@@ -34,6 +34,7 @@
 
 #include <Arduino.h>
 
+
 /******I2C command definitions*************/
 #define MotorSpeedSet             0x82
 #define PWMFrequenceSet           0x84
@@ -49,6 +50,11 @@
 #define BothAntiClockWise         0x05
 #define M1CWM2ACW                 0x06
 #define M1ACWM2CW                 0x09
+#define M1CWM2ST                  0x02 //0010
+#define M1ACWM2ST                 0x01 //0001
+#define M1STM2CW                  0x08 //1000
+#define M1STM2ACW                 0x04 //0100
+#define M1STM2ST                  0x00 //0000
 /**************Motor Direction***************/
 #define ClockWise                 0x0a
 #define AntiClockWise             0x05

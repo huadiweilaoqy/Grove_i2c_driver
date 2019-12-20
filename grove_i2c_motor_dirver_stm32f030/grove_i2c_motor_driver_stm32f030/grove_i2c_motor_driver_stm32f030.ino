@@ -38,7 +38,7 @@
 
 #define GROVE_MOTOR_DRIVER_I2C_CMD_NULL 0xff
 
-#define GROVE_MOTOR_DRIVER_I2C_CMD_MAX_LENGTH 8
+#define GROVE_MOTOR_DRIVER_I2C_CMD_MAX_LENGTH 4
 
 /**************Prescaler Frequence***********/
 #define F_31372Hz 0x01
@@ -53,9 +53,11 @@
 #define ADDR1 5 //PA1
 
 int address = 0;
+int speed1=0;
+int speed2=0;
 void setup()
 {
-
+  setPWMfrequence(F_3921Hz);
   pinMode(ADDR4, INPUT);
   pinMode(ADDR3, INPUT);
   pinMode(ADDR2, INPUT);
@@ -76,23 +78,22 @@ void setup()
   digitalWrite(EB, HIGH);
   digitalWrite(EA, HIGH);
 
-    address = digitalRead(ADDR4) * 8 + digitalRead(ADDR3) * 4 + digitalRead(ADDR2) * 2 + digitalRead(ADDR1);
-    Wire.begin(address);
-    Wire.onReceive(receiveEvent); //Triggers an event that receives a host character
-    Wire.onRequest(requestEvent); //Returns the data from the slave
+  address = digitalRead(ADDR4) * 8 + digitalRead(ADDR3) * 4 + digitalRead(ADDR2) * 2 + digitalRead(ADDR1);
+  Wire.begin(address);
+  Wire.onReceive(receiveEvent); //Triggers an event that receives a host character
+  Wire.onRequest(requestEvent); //Returns the data from the slave
 
 }
 
 void loop()
 {
 
-
 }
 
 void receiveEvent(int a)
 {
   uint8_t count = 0, receive_buffer[GROVE_MOTOR_DRIVER_I2C_CMD_MAX_LENGTH];
-  while (Wire.available() > 0)
+  while ((Wire.available() > 0)&&(count<4))
   {
     receive_buffer[count++] = Wire.read();
     if (count == GROVE_MOTOR_DRIVER_I2C_CMD_MAX_LENGTH)
@@ -183,11 +184,14 @@ void PWMfrequenceSet(uint8_t _frequence)
 
 void MotorspeedSet(uint8_t _speed1, uint8_t _speed2)
 {
+  speed1=_speed1;
+  speed2=_speed2;
   analogWrite(EA, _speed1);
   analogWrite(EB, _speed2);
 }
 
 void requestEvent()
 {
-  Wire.write("OK");
+  Wire.write(speed1);
+  Wire.write(speed2);
 }
